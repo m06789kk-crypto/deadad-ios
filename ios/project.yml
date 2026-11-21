@@ -21,14 +21,13 @@ targets:
       - path: Shared
       - path: Resources/rules.txt
         buildPhase: resources
-    info:
-      path: Resources/Info.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_ENTITLEMENTS: Entitlements/DeadAd.entitlements
         GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Info.plist
     dependencies:
       - target: DNSProxy
       - sdk: NetworkExtension.framework
@@ -41,12 +40,11 @@ targets:
       - path: Shared
       - path: Resources/rules.txt
         buildPhase: resources
-    info:
-      path: Resources/Info-DNSProxy.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app.dnsproxy
         CODE_SIGN_ENTITLEMENTS: Entitlements/DNSProxy.entitlements
         GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Info-DNSProxy.plist
     dependencies:
       - sdk: NetworkExtension.framework
