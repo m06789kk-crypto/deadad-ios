@@ -1,7 +1,7 @@
 name: DeadAd
 
 options:
-  bundleIdPrefix: com.deadad
+  bundleIdPrefix: com.deadblock
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -17,19 +17,36 @@ targets:
     type: application
     platform: iOS
     sources:
-      - path: Sources
+      - path: App
+      - path: Shared
+      - path: Resources/rules.txt
+        buildPhase: resources
     info:
       path: Resources/Info.plist
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.deadad.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app
         TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_ENTITLEMENTS: Entitlements/DeadAd.entitlements
         GENERATE_INFOPLIST_FILE: NO
-        ENABLE_USER_SCRIPT_SANDBOXING: NO
     dependencies:
-      - package: ZIPFoundation
+      - target: DNSProxy
+      - sdk: NetworkExtension.framework
 
-packages:
-  ZIPFoundation:
-    url: https://github.com/weichsel/ZIPFoundation.git
-    from: 0.9.16
+  DNSProxy:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: DNSProxy
+      - path: Shared
+      - path: Resources/rules.txt
+        buildPhase: resources
+    info:
+      path: Resources/Info-DNSProxy.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app.dnsproxy
+        CODE_SIGN_ENTITLEMENTS: Entitlements/DNSProxy.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - sdk: NetworkExtension.framework

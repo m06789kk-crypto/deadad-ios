@@ -1,23 +1,15 @@
 #!/usr/bin/env bash
-# 在 macOS 上把 DeadAd 编成未签名 IPA（之后用 Sideloadly / AltStore / TrollStore 自签安装）。
-# 依赖：Xcode 命令行工具 + xcodegen（brew install xcodegen）。
+# 编译 DeadAd（DNS 系统级去广告 App + DNSProxy 扩展），产出未签名 IPA。
 set -euo pipefail
 cd "$(dirname "$0")"
 
-if ! command -v xcodebuild >/dev/null 2>&1; then
-  echo "需要 Xcode：先安装 Xcode 并执行 sudo xcode-select -s /Applications/Xcode.app" >&2
-  exit 1
-fi
-
-if ! command -v xcodegen >/dev/null 2>&1; then
-  echo "需要 xcodegen：brew install xcodegen" >&2
-  exit 1
-fi
+command -v xcodebuild >/dev/null 2>&1 || { echo "需要 Xcode" >&2; exit 1; }
+command -v xcodegen >/dev/null 2>&1 || { echo "需要 xcodegen" >&2; exit 1; }
 
 echo "==> 生成 Xcode 工程"
 xcodegen generate
 
-echo "==> 编译（不签名）"
+echo "==> 编译（先不签名）"
 xcodebuild \
   -project DeadAd.xcodeproj \
   -scheme DeadAd \
@@ -35,6 +27,17 @@ if [ ! -d "$APP" ]; then
   exit 1
 fi
 
+chmod +x "$APP/DeadAd" || true
+chmod +x "$APP/PlugIns/DNSProxy.appex/DNSProxy" 2>/dev/null || true
+
+echo "==> Ad-hoc 签名并把 Network Extension 权限写进二进制"
+codesign --force --sign - --timestamp=none \
+  --entitlements Entitlements/DNSProxy.entitlements \
+  "$APP/PlugIns/DNSProxy.appex"
+codesign --force --sign - --timestamp=none \
+  --entitlements Entitlements/DeadAd.entitlements \
+  "$APP"
+
 echo "==> 打包 IPA"
 rm -rf build/Payload build/DeadAd.ipa
 mkdir -p build/Payload
@@ -45,4 +48,3 @@ cp -R "$APP" build/Payload/
 )
 
 echo "✅ 完成：$(pwd)/build/DeadAd.ipa"
-echo "   下一步：用 Sideloadly / AltStore 签名安装，或直接丢给 TrollStore。"
