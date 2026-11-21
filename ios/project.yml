@@ -1,7 +1,7 @@
 name: DeadAd
 
 options:
-  bundleIdPrefix: com.deadblock
+  bundleIdPrefix: com.cd-rail
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -23,7 +23,7 @@ targets:
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.cd-rail.zhct
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_ENTITLEMENTS: Entitlements/DeadAd.entitlements
         GENERATE_INFOPLIST_FILE: NO
@@ -42,7 +42,7 @@ targets:
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.deadblock.app.dnsproxy
+        PRODUCT_BUNDLE_IDENTIFIER: com.cd-rail.zhct.dnsproxy
         CODE_SIGN_ENTITLEMENTS: Entitlements/DNSProxy.entitlements
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Resources/Info-DNSProxy.plist

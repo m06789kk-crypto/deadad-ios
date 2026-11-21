@@ -7,7 +7,10 @@ final class ProxyController: ObservableObject {
     @Published var statusText = "检查中…"
     @Published var errorText: String?
 
-    static let providerBundleID = "com.deadblock.app.dnsproxy"
+    /// 扩展 Bundle ID 跟着主 App 走，换签名证书改 Bundle ID 后依然对得上。
+    static var providerBundleID: String {
+        (Bundle.main.bundleIdentifier ?? "com.deadblock.app") + ".dnsproxy"
+    }
 
     init() {
         refresh()
