@@ -1,0 +1,26 @@
+name: build
+on: [push, workflow_dispatch]
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14, macos-15]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: chmod +x build_ipa.sh && ./build_ipa.sh > build.log 2>&1 || (tail -n 80 build.log; exit 1)
+      - if: failure()
+        run: gh release create "log-${{ matrix.os }}-${{ github.run_number }}" build.log --notes "build log" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: success()
+        run: gh release create "v${{ github.run_number }}" build/DeadAd.ipa --notes "unsigned ipa" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
